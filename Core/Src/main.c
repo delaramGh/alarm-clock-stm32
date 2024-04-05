@@ -45,6 +45,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint8_t hour, minute = 0;
+char display_buffer[10];
 
 /* USER CODE END PV */
 
@@ -89,7 +91,9 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+	ssd1306_init();
+	ssd1306_black_screen();
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,24 +103,43 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-//		HAL_Delay(400);
-//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-//		HAL_Delay(700);
+		sprintf(display_buffer, "%d : %d", hour, minute);
 		
-		ssd1306_init();
-
-		ssd1306_write_string(font6x8, "");
-		ssd1306_enter();
-
-		ssd1306_write_string(font16x26, "ABC");
-		ssd1306_enter();
-
+		ssd1306_set_cursor(5, 10);
+		ssd1306_write_string(font11x18, display_buffer);
 		ssd1306_update_screen();
-		HAL_Delay(500);
+		
+		HAL_Delay(1);
   }
-  /* USER CODE END 3 */
+  
 }
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == GPIO_PIN_14) //pc14 -> hour
+	{
+		if(hour < 23)
+			hour += 1;
+		else
+			hour = 0;
+		HAL_Delay(40);
+	}
+	
+	if(GPIO_Pin == GPIO_PIN_9)  //pb9 -> minute
+	{
+		if(minute < 55)
+			minute += 5;
+		else 
+			minute = 0;
+		HAL_Delay(40);
+		
+	}
+}
+
+
+  /* USER CODE END 3 */
+
 
 /**
   * @brief System Clock Configuration

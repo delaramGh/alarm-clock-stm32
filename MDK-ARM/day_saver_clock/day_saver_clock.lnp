@@ -1,12 +1,12 @@
 --cpu Cortex-M3
 "day_saver_clock\startup_stm32f103xb.o"
 "day_saver_clock\ssd1306.o"
+"day_saver_clock\ssd1306_font.o"
 "day_saver_clock\main.o"
 "day_saver_clock\gpio.o"
 "day_saver_clock\i2c.o"
 "day_saver_clock\stm32f1xx_it.o"
 "day_saver_clock\stm32f1xx_hal_msp.o"
-"day_saver_clock\ssd1306_font.o"
 "day_saver_clock\stm32f1xx_hal_gpio_ex.o"
 "day_saver_clock\stm32f1xx_hal_i2c.o"
 "day_saver_clock\stm32f1xx_hal.o"

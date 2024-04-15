@@ -26,7 +26,10 @@ day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.
 day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
 day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc.h
+day_saver_clock\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc_ex.h
 day_saver_clock\main.o: ../Core/Inc/i2c.h
+day_saver_clock\main.o: ../Core/Inc/rtc.h
 day_saver_clock\main.o: ../Core/Inc/gpio.h
 day_saver_clock\main.o: ../Core/Inc/ssd1306.h
 day_saver_clock\main.o: ../Core/Inc/ssd1306_font.h

@@ -31,7 +31,13 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+enum ButtonState
+{
+	BUTTON_DEFAULT,
+	BUTTON_HOUR_CONTROL,
+	BUTTON_MINUTE_CONTROL,
+	BUTTON_SET_ALARM
+};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -47,8 +53,17 @@
 
 /* USER CODE BEGIN PV */
 uint8_t hour, minute = 0;
-char display_buffer[10];
+char display_buffer[20];
 
+RTC_TimeTypeDef myTime;
+
+uint8_t alarm_hour, alarm_minute = 0;
+
+enum ButtonState button_state = BUTTON_DEFAULT;
+char button_state_str[1];
+
+uint8_t test = 0;
+uint8_t if_test[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,42 +120,75 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		sprintf(display_buffer, "%d : %d", hour, minute);
+		//CHECK ALARM
+		HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+	
+		if(button_state == BUTTON_DEFAULT)
+			sprintf(display_buffer, "%d:%d:%d     ", myTime.Hours, myTime.Minutes, myTime.Seconds);
 		
+		else
+			sprintf(display_buffer, "%d : %d      ", hour, minute);
+		
+		if(myTime.Hours == alarm_hour && myTime.Minutes == alarm_minute)
+			sprintf(display_buffer, "! ALARM !     ");
+	
 		ssd1306_set_cursor(5, 10);
 		ssd1306_write_string(font11x18, display_buffer);
+		ssd1306_set_cursor(5, 40);
+		sprintf(button_state_str, "%d", button_state);
+		ssd1306_write_string(font11x18, button_state_str);
 		ssd1306_update_screen();
-		
-		HAL_Delay(1);
+		HAL_Delay(10);
   }
-  
 }
+//_______________________________________________________________________________
+//_______________________________________________________________________________
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin == GPIO_PIN_12) //pc12 -> hour
-	{
-		if(hour < 23)
-			hour += 1;
-		else
-			hour = 0;
-		HAL_Delay(60);
-	}
 	
-	if(GPIO_Pin == GPIO_PIN_13)  //pb13 -> minute
+	if(GPIO_Pin == GPIO_PIN_12) //pc12 -> minute and hour
 	{
-		if(minute < 55)
-			minute += 5;
-		else 
-			minute = 0;
-		HAL_Delay(60);
-		
+		if(button_state == BUTTON_HOUR_CONTROL)
+		{
+			if(hour < 23)
+				hour += 1;
+			else
+				hour = 0;
+			HAL_Delay(30);
+		}
+		else if(button_state == BUTTON_MINUTE_CONTROL)
+		{
+			if(minute < 55)
+				minute += 5;
+			else 
+				minute = 0;
+			HAL_Delay(30);
+		}
+	}//pc12
+	
+	if(GPIO_Pin == GPIO_PIN_13)  //pb13 -> mode selector
+	{
+		if(button_state == BUTTON_DEFAULT)
+			button_state = BUTTON_HOUR_CONTROL;
+		else if(button_state == BUTTON_HOUR_CONTROL)
+			button_state = BUTTON_MINUTE_CONTROL;
+		else if(button_state == BUTTON_MINUTE_CONTROL)
+			button_state = BUTTON_SET_ALARM;
+		else if(button_state == BUTTON_SET_ALARM)
+		{
+			alarm_hour = hour;
+			alarm_minute = minute;
+			button_state = BUTTON_DEFAULT;
+		}
+		HAL_Delay(10);
 	}
 }
 
 
   /* USER CODE END 3 */
+
 
 
 /**

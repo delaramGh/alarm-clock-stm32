@@ -31,6 +31,7 @@ void MX_RTC_Init(void)
 {
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef DateToUpdate = {0};
+  RTC_AlarmTypeDef sAlarm = {0};
 
   /** Initialize RTC Only
   */
@@ -43,28 +44,44 @@ void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
-
+	if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != 0x32F2)
+	{
   /* USER CODE END Check_RTC_BKUP */
 
-  /** Initialize RTC and set the Time and Date
-  */
-  sTime.Hours = 0x0;
-  sTime.Minutes = 0x0;
-  sTime.Seconds = 0x0;
+		/** Initialize RTC and set the Time and Date
+		*/
+		sTime.Hours = 1;
+		sTime.Minutes = 17;
+		sTime.Seconds = 0;
 
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  DateToUpdate.WeekDay = RTC_WEEKDAY_MONDAY;
-  DateToUpdate.Month = RTC_MONTH_JANUARY;
-  DateToUpdate.Date = 0x1;
-  DateToUpdate.Year = 0x0;
+		if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
+		{
+			Error_Handler();
+		}
+		DateToUpdate.WeekDay = RTC_WEEKDAY_MONDAY;
+		DateToUpdate.Month = RTC_MONTH_APRIL;
+		DateToUpdate.Date = 15;
+		DateToUpdate.Year = 24;
 
-  if (HAL_RTC_SetDate(&hrtc, &DateToUpdate, RTC_FORMAT_BCD) != HAL_OK)
-  {
-    Error_Handler();
-  }
+		if (HAL_RTC_SetDate(&hrtc, &DateToUpdate, RTC_FORMAT_BIN) != HAL_OK)
+		{
+			Error_Handler();
+		}
+		/** Enable the Alarm A
+		*/
+		sAlarm.AlarmTime.Hours = 0;
+		sAlarm.AlarmTime.Minutes = 0;
+		sAlarm.AlarmTime.Seconds = 0;
+		sAlarm.Alarm = RTC_ALARM_A;
+		if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
+		{
+			Error_Handler();
+		}
+		
+	/* USER CODE BEGIN Check_RTC_BKUP */
+		HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x32F2);
+	}//backup check
+	/* USER CODE END Check_RTC_BKUP */
 
 }
 
@@ -83,6 +100,8 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
     __HAL_RCC_RTC_ENABLE();
 
     /* RTC interrupt Init */
+    HAL_NVIC_SetPriority(RTC_IRQn, 1, 0);
+    HAL_NVIC_EnableIRQ(RTC_IRQn);
     HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
@@ -103,6 +122,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
     __HAL_RCC_RTC_DISABLE();
 
     /* RTC interrupt Deinit */
+    HAL_NVIC_DisableIRQ(RTC_IRQn);
     HAL_NVIC_DisableIRQ(RTC_Alarm_IRQn);
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 

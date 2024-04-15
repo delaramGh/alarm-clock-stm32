@@ -27,6 +27,7 @@ Project File Date:  04/15/2024
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'day_saver_clock'
+compiling rtc.c...
 compiling main.c...
 ../Core/Inc/ssd1306.h(122): warning:  #1295-D: Deprecated declaration entire_display_off - give arg types
   void entire_display_off();
@@ -54,13 +55,19 @@ compiling main.c...
   void ssd1306_space();
 ../Core/Inc/ssd1306.h(230): warning:  #1-D: last line of file ends without a newline
   #endif /* __SSD1306_H__ */
-../Core/Src/main.c(108): warning:  #223-D: function "sprintf" declared implicitly
-  		sprintf(display_buffer, "%d : %d", hour, minute);
-../Core/Src/main.c: 14 warnings, 0 errors
+../Core/Src/main.c(127): warning:  #223-D: function "sprintf" declared implicitly
+  			sprintf(display_buffer, "%d:%d:%d     ", myTime.Hours, myTime.Minutes, myTime.Seconds);
+../Core/Src/main.c(130): warning:  #223-D: function "sprintf" declared implicitly
+  			sprintf(display_buffer, "%d : %d      ", hour, minute);
+../Core/Src/main.c(133): warning:  #223-D: function "sprintf" declared implicitly
+  			sprintf(display_buffer, "! ALARM !     ");
+../Core/Src/main.c(138): warning:  #223-D: function "sprintf" declared implicitly
+  		sprintf(button_state_str, "%d", button_state);
+../Core/Src/main.c: 17 warnings, 0 errors
 linking...
-Program Size: Code=7044 RO-data=292 RW-data=3460 ZI-data=2164  
+Program Size: Code=11224 RO-data=292 RW-data=3468 ZI-data=2172  
 FromELF: creating hex file...
-"day_saver_clock\day_saver_clock.axf" - 0 Error(s), 14 Warning(s).
+"day_saver_clock\day_saver_clock.axf" - 0 Error(s), 17 Warning(s).
 
 <h2>Software Packages used:</h2>
 

@@ -1,0 +1,18 @@
+<myWidget>:
+    orientation: 'vertical'
+    TextInput:
+        id: t
+        font_size:100
+        size_hint_y: None
+        height: 200
+        text: 'default'
+        on_text: root.change_label_color()
+    FloatLayout:
+        Scatter:
+            Label:
+                id: my_label
+                text: 'l-' + t.text
+                font_size: 200
+                color: (0.9, 0.5, 0.5, 1)
+
+

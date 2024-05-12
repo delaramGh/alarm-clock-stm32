@@ -1,4 +1,8 @@
 <mywindow>
+    name: name_local
+    email: email_local
+
+
     GridLayout:
         cols: 1
         size: root.width, root.height
@@ -6,19 +10,23 @@
         GridLayout:
             cols: 2
             Label:
-                text: "hi my baby"
+                text: "enter name: "
+            TextInput:
+                id: name_local
+                multiline: False
+            Label:
+                text: "enter password: "
             TextInput:
                 multiline: False
             Label:
-                text: "text2"
+                text: "enter email: "
             TextInput:
-                multiline: False
-            Label:
-                text: "text3"
-            TextInput:
+                id: email_local
                 multiline: False
         
         Button: 
-            tetx: "okay butt"
+            text: "okay butt"
+            on_press: root.callback()
+
             
             

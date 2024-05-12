@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "ssd1306.h"
 #include "ssd1306_font.h"
+#include <stdbool.h> 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,15 +61,19 @@ RTC_TimeTypeDef myTime;
 uint8_t alarm_hour, alarm_minute = 0;
 
 enum ButtonState button_state = BUTTON_DEFAULT;
-char button_state_str[1];
+char button_state_str[20];
 
 uint8_t test = 0;
 uint8_t if_test[4];
+
+bool alarm_flag = false;
+bool alarm_on = true;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void write_clock_state();
 
 /* USER CODE END PFP */
 
@@ -82,6 +87,7 @@ void SystemClock_Config(void);
   * @retval int
   */
 int main(void)
+
 {
   /* USER CODE BEGIN 1 */
 
@@ -129,13 +135,23 @@ int main(void)
 		else
 			sprintf(display_buffer, "%d : %d      ", hour, minute);
 		
-		if(myTime.Hours == alarm_hour && myTime.Minutes == alarm_minute)
+		alarm_flag = ((myTime.Hours == alarm_hour) && (myTime.Minutes == alarm_minute));
+		
+		if(alarm_flag && alarm_on)
+		{
 			sprintf(display_buffer, "! ALARM !     ");
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+		}
+		else 
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+		}
+			
 	
 		ssd1306_set_cursor(5, 10);
 		ssd1306_write_string(font11x18, display_buffer);
 		ssd1306_set_cursor(5, 40);
-		sprintf(button_state_str, "%d", button_state);
+	  write_clock_state();
 		ssd1306_write_string(font11x18, button_state_str);
 		ssd1306_update_screen();
 		HAL_Delay(10);
@@ -148,47 +164,71 @@ int main(void)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	
-	if(GPIO_Pin == GPIO_PIN_12) //pc12 -> minute and hour
+	if(GPIO_Pin == GPIO_PIN_12) //pb12 -> minute and hour
 	{
-		if(button_state == BUTTON_HOUR_CONTROL)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET)  //double button
+		{	alarm_on = false; HAL_Delay(100);}
+			
+		else
 		{
-			if(hour < 23)
-				hour += 1;
-			else
-				hour = 0;
-			HAL_Delay(30);
-		}
-		else if(button_state == BUTTON_MINUTE_CONTROL)
-		{
+			if(button_state == BUTTON_HOUR_CONTROL)
+			{
+				if(hour < 23)
+					hour += 1;
+				else
+					hour = 0;
+			}
+			else if(button_state == BUTTON_MINUTE_CONTROL)
+			{
 			if(minute < 55)
 				minute += 5;
 			else 
 				minute = 0;
-			HAL_Delay(30);
-		}
-	}//pc12
+		  }
+	  }
+		HAL_Delay(50);
+	}//pb12
+	
 	
 	if(GPIO_Pin == GPIO_PIN_13)  //pb13 -> mode selector
 	{
-		if(button_state == BUTTON_DEFAULT)
-			button_state = BUTTON_HOUR_CONTROL;
-		else if(button_state == BUTTON_HOUR_CONTROL)
-			button_state = BUTTON_MINUTE_CONTROL;
-		else if(button_state == BUTTON_MINUTE_CONTROL)
-			button_state = BUTTON_SET_ALARM;
-		else if(button_state == BUTTON_SET_ALARM)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_SET)  //double button
+		{	alarm_on = false; HAL_Delay(100);}
+		
+		else
 		{
-			alarm_hour = hour;
-			alarm_minute = minute;
-			button_state = BUTTON_DEFAULT;
+			if(button_state == BUTTON_DEFAULT)
+				button_state = BUTTON_HOUR_CONTROL;
+			else if(button_state == BUTTON_HOUR_CONTROL)
+				button_state = BUTTON_MINUTE_CONTROL;
+			else if(button_state == BUTTON_MINUTE_CONTROL)
+				button_state = BUTTON_SET_ALARM;
+			else if(button_state == BUTTON_SET_ALARM)
+			{
+				alarm_hour = hour;
+				alarm_minute = minute;
+				button_state = BUTTON_DEFAULT;
+				alarm_on = true;
+			}
 		}
-		HAL_Delay(10);
+		
+		HAL_Delay(50);
 	}
 }
 
+void write_clock_state()
+{
+		if(button_state == 0)
+			sprintf(button_state_str, "Time, %d   ", (uint8_t)alarm_on);
+		else if(button_state == 1)
+			sprintf(button_state_str, "Set Hour   ");
+		else if(button_state == 2)
+			sprintf(button_state_str, "Set Minute");
+		else if(button_state == 3)
+			sprintf(button_state_str, "Done!      ");
+}
 
   /* USER CODE END 3 */
-
 
 
 /**

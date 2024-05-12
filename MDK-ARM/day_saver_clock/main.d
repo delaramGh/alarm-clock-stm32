@@ -33,3 +33,4 @@ day_saver_clock\main.o: ../Core/Inc/rtc.h
 day_saver_clock\main.o: ../Core/Inc/gpio.h
 day_saver_clock\main.o: ../Core/Inc/ssd1306.h
 day_saver_clock\main.o: ../Core/Inc/ssd1306_font.h
+day_saver_clock\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

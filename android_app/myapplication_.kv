@@ -1,0 +1,16 @@
+<Button>:
+    font_sixe: 40
+    color: 0.8, 0.6, 0.7, 1
+    size_hint: 0.2, 0.4
+
+
+
+<FloatLayout>:
+    Button:
+        pos_hint: {"x": 0.5, "top": 1}
+        text: "tech with"
+    
+    Button:
+        id: btn2
+        text: "deli" if btn2.state == "normal" else "DELI"
+        background_color: 0.3, 0.4, 0.5, 1

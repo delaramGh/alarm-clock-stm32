@@ -141,6 +141,9 @@ int main(void)
 		{
 			sprintf(display_buffer, "! ALARM !     ");
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			HAL_Delay(1000);
 		}
 		else 
 		{

@@ -37,7 +37,11 @@ enum ButtonState
 	BUTTON_DEFAULT,
 	BUTTON_HOUR_CONTROL,
 	BUTTON_MINUTE_CONTROL,
-	BUTTON_SET_ALARM
+	BUTTON_SET_ALARM,
+	
+	BUTTON_SET_CLOCK_HOUR,
+	BUTTON_SET_CLOCK_MINUTE,
+	BUTTON_SET_CLOCK
 };
 /* USER CODE END PTD */
 
@@ -140,6 +144,7 @@ int main(void)
 		if(alarm_flag && alarm_on)
 		{
 			sprintf(display_buffer, "! ALARM !     ");
+			//Alarm beeping
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 			HAL_Delay(500);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
@@ -147,7 +152,7 @@ int main(void)
 		}
 		else 
 		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); //turns off the alarm
 		}
 			
 	
@@ -174,20 +179,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			
 		else
 		{
-			if(button_state == BUTTON_HOUR_CONTROL)
+			if(button_state == BUTTON_HOUR_CONTROL || button_state == BUTTON_SET_CLOCK_HOUR)
 			{
 				if(hour < 23)
 					hour += 1;
 				else
 					hour = 0;
 			}
-			else if(button_state == BUTTON_MINUTE_CONTROL)
+			else if(button_state == BUTTON_MINUTE_CONTROL || button_state == BUTTON_SET_CLOCK_MINUTE)
 			{
 			if(minute < 55)
 				minute += 5;
 			else 
 				minute = 0;
 		  }
+			else if(button_state == BUTTON_SET_ALARM)
+			{
+				button_state = BUTTON_SET_CLOCK_HOUR;
+			}
 	  }
 		HAL_Delay(50);
 	}//pb12
@@ -202,10 +211,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		{
 			if(button_state == BUTTON_DEFAULT)
 				button_state = BUTTON_HOUR_CONTROL;
+			
 			else if(button_state == BUTTON_HOUR_CONTROL)
 				button_state = BUTTON_MINUTE_CONTROL;
+			
 			else if(button_state == BUTTON_MINUTE_CONTROL)
 				button_state = BUTTON_SET_ALARM;
+			
 			else if(button_state == BUTTON_SET_ALARM)
 			{
 				alarm_hour = hour;
@@ -213,22 +225,49 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				button_state = BUTTON_DEFAULT;
 				alarm_on = true;
 			}
+			
+			else if(button_state == BUTTON_SET_CLOCK_HOUR)
+				button_state = BUTTON_SET_CLOCK_MINUTE;
+			
+			else if(button_state == BUTTON_SET_CLOCK_MINUTE)
+				button_state = BUTTON_SET_CLOCK;
+		 
+			else if(button_state == BUTTON_SET_CLOCK)
+			{
+				// config the clock
+				RTC_TimeTypeDef sTime = {0};
+				sTime.Hours = hour;
+				sTime.Minutes = minute;
+				sTime.Seconds = 0;
+				HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+				button_state = BUTTON_DEFAULT;
+			}
+			
 		}
 		
 		HAL_Delay(50);
 	}
 }
 
+
+
 void write_clock_state()
 {
-		if(button_state == 0)
+		if(button_state == BUTTON_DEFAULT)
 			sprintf(button_state_str, "Time, %d   ", (uint8_t)alarm_on);
-		else if(button_state == 1)
-			sprintf(button_state_str, "Set Hour   ");
-		else if(button_state == 2)
-			sprintf(button_state_str, "Set Minute");
-		else if(button_state == 3)
-			sprintf(button_state_str, "Done!      ");
+		else if(button_state == BUTTON_HOUR_CONTROL)
+			sprintf(button_state_str, "Set Alarm H");
+		else if(button_state == BUTTON_MINUTE_CONTROL)
+			sprintf(button_state_str, "Set Alarm M");
+		else if(button_state == BUTTON_SET_ALARM)
+			sprintf(button_state_str, "Alarm Set! ");
+		
+		else if(button_state == BUTTON_SET_CLOCK)
+			sprintf(button_state_str, "Clock Set! ");
+		else if(button_state == BUTTON_SET_CLOCK_HOUR)
+			sprintf(button_state_str, "Set Clock H");
+		else if(button_state == BUTTON_SET_CLOCK_MINUTE)
+			sprintf(button_state_str, "Set Clock M");
 }
 
   /* USER CODE END 3 */

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [day_saver_clock\day_saver_clock.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image day_saver_clock\day_saver_clock.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 14 16:44:32 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed May 15 16:32:33 2024
 <BR><P>
 <H3>Maximum Stack Usage =        184 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -725,7 +725,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[90]"></a>MX_RTC_Init</STRONG> (Thumb, 166 bytes, Stack size 32 bytes, rtc.o(i.MX_RTC_Init))
+<P><STRONG><a name="[90]"></a>MX_RTC_Init</STRONG> (Thumb, 168 bytes, Stack size 32 bytes, rtc.o(i.MX_RTC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = MX_RTC_Init &rArr; HAL_RTC_SetAlarm_IT &rArr; HAL_RTC_GetTime &rArr; RTC_DateUpdate &rArr; RTC_WeekDayNum
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_SetDate
@@ -774,7 +774,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xb.o(RESET)
 </UL>
-<P><STRONG><a name="[94]"></a>SystemClock_Config</STRONG> (Thumb, 104 bytes, Stack size 96 bytes, main.o(i.SystemClock_Config))
+<P><STRONG><a name="[94]"></a>SystemClock_Config</STRONG> (Thumb, 100 bytes, Stack size 96 bytes, main.o(i.SystemClock_Config))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = SystemClock_Config &rArr; HAL_RCC_ClockConfig &rArr; HAL_InitTick &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig

@@ -46,9 +46,9 @@ void MX_RTC_Init(void)
   /* USER CODE BEGIN Check_RTC_BKUP */
 	if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != 0x32F2)
 	{
-  /* USER CODE END Check_RTC_BKUP */
+		/* USER CODE END Check_RTC_BKUP */
 
-  /** Initialize RTC and set the Time and Date
+		/** Initialize RTC and set the Time and Date
 		*/
 		sTime.Hours = 11;
 		sTime.Minutes = 10;
